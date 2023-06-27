@@ -68,7 +68,7 @@ public class Controller {
 	
 	//if the user add a new order but there is a same order so it will adjust the product quantity
 	public boolean orderAnzahlAnpassen(Order o , int Anzahl) {
-		for (Order tempOrder : this.orderList) {
+		for (Order tempOrder : this.getOrderList()) {
 			if(tempOrder.getK().getName().contains(o.getK().getName()) && tempOrder.getI().getId() == o.getI().getId()) {
 				tempOrder.getI().setQuantity(tempOrder.getI().getQuantity() + Anzahl);
 				//this.inventoryAnzahlVerringern(tempOrder.getI(), Anzahl);
@@ -81,7 +81,7 @@ public class Controller {
 	
 	public boolean inventoryAnzahlVerringern(int id , int Anzahl) {
 		//this.invtList.get(i.getId()).setQuantity(this.invtList.get(i.getId()).getQuantity() - Anzahl);
-		for (Inventory tempInventory : this.invtList) {
+		for (Inventory tempInventory : this.getInvtList()) {
 			if(tempInventory.getId() == id) {
 				tempInventory.setQuantity(tempInventory.getQuantity() - Anzahl);
 				return true;
@@ -93,10 +93,11 @@ public class Controller {
 	
 	
 	// method to delete a specific amount of order 
-	public void orderLoeschenMitAnzahl(String product , int Anzahl) {
-		Order orderToDelete = this.findOrderByName(product);
+	// loop over order name and product if its same then delete it at this Index.. 
+	public void orderLoeschenMitAnzahl(String product , int Anzahl , String Kunde) {
+		Order orderToDelete = this.findOrderByNameAndKunde(product, Kunde);
 		if (orderToDelete != null) {
-			this.KundeInventoryAnzahlVerringern(orderToDelete.getI().getId(), Anzahl);
+			this.KundeInventoryAnzahlVerringern(orderToDelete.getK().getName() ,orderToDelete.getI().getProduct(), Anzahl);
 			//orderList.remove(orderToDelete);
 			System.out.println("Order deleted successfully.");
 			this.showReturnProduct(orderToDelete.getI().getProduct());
@@ -107,8 +108,8 @@ public class Controller {
 	}
 
 	//method to delete complete order
-	public void orderLoeschen(String product) {
-		Order orderToDelete = this.findOrderByName(product);
+	public void orderLoeschen(String product , String Kunde) {
+		Order orderToDelete = this.findOrderByNameAndKunde(product, Kunde);
 		if (orderToDelete != null) {
 			orderList.remove(orderToDelete);
 			System.out.println("Order deleted successfully.");
@@ -119,12 +120,11 @@ public class Controller {
 		}
 	}
 
-
-	public boolean KundeInventoryAnzahlVerringern(int id , int Anzahl) {
-		//this.invtList.get(i.getId()).setQuantity(this.invtList.get(i.getId()).getQuantity() - Anzahl);
-		for (Order tempInventory : this.orderList) {
-			if(tempInventory.getI().getId() == id) {
-				tempInventory.getI().setQuantity(tempInventory.getI().getQuantity() - Anzahl);
+	//kunden inventory Anzahl anpassen
+	public boolean KundeInventoryAnzahlVerringern(String name , String product, int Anzahl) {
+		for (Order temp : this.getOrderList()) {
+			if(temp.getK().getName() == name && temp.getI().getProduct() == product) {
+				temp.getI().setQuantity(temp.getI().getQuantity() - Anzahl);
 				return true;
 			}
 			
@@ -132,9 +132,9 @@ public class Controller {
 		return false;
 	}
 	
+	
 	public boolean inventoryAnzahlErhöhen(int id , int Anzahl) {
-		//this.invtList.get(i.getId()).setQuantity(this.invtList.get(i.getId()).getQuantity() - Anzahl);
-		for (Inventory tempInventory : this.invtList) {
+		for (Inventory tempInventory : this.getInvtList()) {
 			if(tempInventory.getId() == id) {
 				tempInventory.setQuantity(tempInventory.getQuantity() + Anzahl);
 				return true;
@@ -146,7 +146,7 @@ public class Controller {
 	
 	//helping method 
 	public void reduceProductQuantity(Inventory inventory, int quantity) {
-		for (Inventory item : invtList) {
+		for (Inventory item : this.getInvtList()) {
 			if (item.equals(inventory)) {
 				int currentQuantity = item.getQuantity();
 				int newQuantity = currentQuantity - quantity;
@@ -164,7 +164,7 @@ public class Controller {
 
 	//helping method 
 	public void increaseProductQuantity(Inventory inventory, int quantity) {
-		for (Inventory item : invtList) {
+		for (Inventory item : this.getInvtList()) {
 			if (item.equals(inventory)) {
 				int currentQuantity = item.getQuantity();
 				int newQuantity = currentQuantity + quantity;
@@ -192,9 +192,17 @@ public class Controller {
 		invtList.add(invt);
 	}
 
-
+	//this will give an order based of the costumer name and the product name
+	public Order findOrderByNameAndKunde(String name , String kunde ) {
+		 for (Order order : this.getOrderList()) {
+		        if (order.getI().getProduct().equals(name) && order.getK().getName().equals(kunde)) {
+		            return order;
+		        }
+		    }
+		    return null; 
+	}
 	public Kunde findCustomerByName(String name) {
-		for (Kunde customer : kundenList) {
+		for (Kunde customer : this.getKundenList()) {
 			if (customer.getName().equals(name)) {
 				return customer;
 			}
@@ -203,7 +211,7 @@ public class Controller {
 	}
 
 	public Inventory findProductById(int productId) {
-		for (Inventory inventory : invtList) {
+		for (Inventory inventory : this.invtList) {
 			if (inventory.getId() == productId) {
 				return inventory;
 			}
@@ -212,7 +220,7 @@ public class Controller {
 	}
 
 	public Inventory findProductByName(String name) {
-		for (Inventory inventory : invtList) {
+		for (Inventory inventory : this.getInvtList()) {
 			if (inventory.getProduct().equals(name)) {
 				return inventory;
 			}
@@ -220,8 +228,10 @@ public class Controller {
 		return null; 
 	}
 	
+	
+	/*
 	private Order findOrderByName(String Name) {
-	    for (Order order : this.orderList) {
+	    for (Order order : this.getOrderList()) {
 	        if (order.getI().getProduct().equals(Name)) {
 	            return order;
 	        }
@@ -229,7 +239,7 @@ public class Controller {
 	    return null; 
 	}
 	
-/*
+
 	private Order findOrderByInventory(Inventory inventory) {
 		for (Order order : orderList) {
 			if (order.getI().equals(inventory)) {
@@ -286,7 +296,7 @@ public class Controller {
 
 
 	public List<Inventory> getInvtList() {
-		return invtList;
+		return this.invtList;
 	}
 
 
@@ -296,7 +306,7 @@ public class Controller {
 
 
 	public List<Order> getOrderList() {
-		return orderList;
+		return this.orderList;
 	}
 
 

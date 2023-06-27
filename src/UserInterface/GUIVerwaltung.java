@@ -268,7 +268,7 @@ public class GUIVerwaltung extends JFrame {
 			controller.kundeHinzufuegen(customer);
 			updateOutput("Empfänger hinzugefügt:\n" + customer.toString());
 		}else {
-			updateOutput("Kunde existiert\n");
+			updateOutput("Kunde existiert!!\n");
 		}
 	}
 
@@ -292,17 +292,19 @@ public class GUIVerwaltung extends JFrame {
 
 	private void deleteOrderButtonClicked() {
 		this.showOrderButtonClicked();
-		this.showInventoryButtonClicked();
+		String customerName = JOptionPane.showInputDialog(this, "Costumer name:");
+		//this.showInventoryButtonClicked();
+		this.showOrderButtonClicked();
 		String productName = JOptionPane.showInputDialog(this, "delete product name:");
 
 		if (productName != null) {
 			int reply = JOptionPane.showConfirmDialog(null, "you want to delete entire order?", "Order Delete", JOptionPane.YES_NO_OPTION);
 			if (reply == JOptionPane.YES_OPTION) {
 			    //JOptionPane.showMessageDialog(null, "HELLO");
-			    controller.orderLoeschen(productName);   
+			    controller.orderLoeschen(productName , customerName);   
 			} else {
 				int quantity = Integer.parseInt(JOptionPane.showInputDialog(this, "Anzahl:"));
-				controller.orderLoeschenMitAnzahl(productName, quantity);
+				controller.orderLoeschenMitAnzahl(productName, quantity , customerName);
 			}	
 
 		} else {
@@ -312,6 +314,7 @@ public class GUIVerwaltung extends JFrame {
 	}
 
 	private void addOrderButtonClicked() {
+		this.showCustomersButtonClicked();
 		String customerName = JOptionPane.showInputDialog(this, "Empfänger Name:");
 		Kunde customer = controller.findCustomerByName(customerName);
 		if (customer != null) {
