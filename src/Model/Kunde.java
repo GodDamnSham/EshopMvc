@@ -49,8 +49,8 @@ public class Kunde implements Cloneable {
     public Kunde clone() {
         try {
            Kunde cloned = (Kunde) super.clone();
-           cloned.name = new String(this.name);
-           cloned.adress = new String(this.adress);
+           cloned.name = new String(this.getName());
+           cloned.adress = new String(this.getAdress());
             return cloned;
         } catch (CloneNotSupportedException e) {
             return null;
@@ -61,12 +61,6 @@ public class Kunde implements Cloneable {
 	public String toString() {
 	    String tableFormat = "%-15s %-20s %-20s\n";
 	    StringBuilder sb = new StringBuilder();
-	    
-	    // Table header
-	    //sb.append(String.format(tableFormat, "ID", "Name", "Address"));
-	    //sb.append(String.format(tableFormat, "----------", "--------------------", "------------------------------"));
-	    
-	    // Table rows
 	    sb.append(String.format(tableFormat, id, name, adress));
 	    
 	    return sb.toString();

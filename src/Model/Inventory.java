@@ -42,29 +42,25 @@ public class Inventory implements Cloneable {
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
+	
 	@Override
     public Inventory clone() {
         try {
             Inventory cloned = (Inventory) super.clone();
-            cloned.product = new String(this.product);
+            cloned.product = new String(this.getProduct());
             return cloned;
         } catch (CloneNotSupportedException e) {
             return null;
         }
     }
+	
+	
 
 	@Override
 	public String toString() {
-
 		String tableFormat = "%-10s %-30s %-10s\n";
 		StringBuilder sb = new StringBuilder();
-
-		// Table header
-		//sb.append(String.format(tableFormat, "ID", "Product", "Quantity"));
-		//sb.append(String.format(tableFormat, "----------", "------------------------------", "----------"));
-
-		// Table rows
-		sb.append(String.format(tableFormat, id, product,quantity));
+		sb.append(String.format(tableFormat, id, product, quantity));
 
 		return sb.toString();
 	}

@@ -41,14 +41,8 @@ public class Order {
 	
 	@Override
 	public String toString() {
-	    String tableFormat = "%-10s %-30s %-10s %-10s\n";
+	    String tableFormat = "%-10s %-60s %-10s %-10s\n";
 	    StringBuilder sb = new StringBuilder();
-
-	    // Table header
-	    //sb.append(String.format(tableFormat, "kunde", "adresse", "gekauft","Anzahl"));
-	    //sb.append(String.format(tableFormat, "----------", "------------------------------", "----------","----------"));
-
-	    // Table row
 	    sb.append(String.format(tableFormat, k.getName(), k.getAdress(), i.getProduct() , i.getQuantity()));
 
 	    return sb.toString();

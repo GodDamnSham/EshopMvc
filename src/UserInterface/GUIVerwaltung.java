@@ -1,7 +1,7 @@
 package UserInterface;
 import javax.swing.*;
 
-import Controller.Controller;
+import BuisnessLogic.Controller;
 import Model.Inventory;
 import Model.Kunde;
 import Model.Order;
@@ -27,21 +27,21 @@ public class GUIVerwaltung extends JFrame {
 		this.accountCredentials = new AccountCred();
 		initializeUserAccounts();
 		initializeGUI();
-		controller.invtHinzufuegen(new Inventory("Shampoo" , 200));
-		controller.invtHinzufuegen(new Inventory("Seife" , 150));
-		controller.invtHinzufuegen(new Inventory("Reis" , 20));
-		controller.invtHinzufuegen(new Inventory("Milch" , 100));
-		controller.invtHinzufuegen(new Inventory("Pizza" , 20));
+		controller.invtHinzufuegen(new Inventory("shampoo" , 200));
+		controller.invtHinzufuegen(new Inventory("seife" , 150));
+		controller.invtHinzufuegen(new Inventory("reis" , 20));
+		controller.invtHinzufuegen(new Inventory("milch" , 100));
+		controller.invtHinzufuegen(new Inventory("pizza" , 20));
 		controller.kundeHinzufuegen(new Kunde("malik" , "Rheiberger str. 19 85057 Ingolstadt"));
 	}
 	
-	//user accounts set
+	//creating user and admin account
 	private void initializeUserAccounts() {
         accountCredentials.setUsername(AccountType.ADMIN, "admin");
         accountCredentials.setPassword(AccountType.ADMIN, "admin123");
 
-        accountCredentials.setUsername(AccountType.USER, "malik");
-        accountCredentials.setPassword(AccountType.USER, "malik123");
+        accountCredentials.setUsername(AccountType.USER, "user");
+        accountCredentials.setPassword(AccountType.USER, "user123");
     }
 	
 	//initializing the Interface..
@@ -65,14 +65,14 @@ public class GUIVerwaltung extends JFrame {
 		setVisible(true);
 	}
 	
-	
+	//Login buttion action
 	private void loginButtonClicked(String password , String name) {
         if (checkCredentials(AccountType.ADMIN, password , name )) {
             currentAccountType = AccountType.ADMIN;
-            handleLoginSuccess();
+            this.handleLoginSuccess();
         } else if (checkCredentials(AccountType.USER, password , name)) {
             currentAccountType = AccountType.USER;
-            handleLoginSuccess();
+            this.handleLoginSuccess();
         } else {
             JOptionPane.showMessageDialog(this, "Invalid username or password!", "Login Error", JOptionPane.ERROR_MESSAGE);
             loginPanel.resetFields();
@@ -92,17 +92,17 @@ public class GUIVerwaltung extends JFrame {
         // Show different options based on the account type
         switch (currentAccountType) {
             case ADMIN:
-                showAdminOptions();
+                this.showAdminOptions();
                 break;
             case USER:
-                showUserOptions();
+                this.showUserOptions();
                 break;
         }
         revalidate();
         repaint();
     }
 	
-	
+	// showing option for Admin
 	private void showAdminOptions() {
         setTitle("Admin - Verwaltung von E-Shop");
 
@@ -146,6 +146,7 @@ public class GUIVerwaltung extends JFrame {
 		add(scrollPane, BorderLayout.SOUTH);
     }
 	
+	//showing user Option
 	private void showUserOptions() {
         setTitle("User - Verwaltung von E-Shop");
         JPanel buttonPanel = new JPanel();
@@ -271,7 +272,7 @@ public class GUIVerwaltung extends JFrame {
 			updateOutput("Kunde existiert!!\n");
 		}
 	}
-
+// adding data in Inventory 
 	private void addInventoryButtonClicked() {
 		String name = JOptionPane.showInputDialog(this, "Produktname:");
 		int quantity = Integer.parseInt(JOptionPane.showInputDialog(this, "Anzahl:"));
@@ -289,7 +290,7 @@ public class GUIVerwaltung extends JFrame {
 
 		}
 	}
-
+//deleting data from inventory 
 	private void deleteOrderButtonClicked() {
 		this.showOrderButtonClicked();
 		String customerName = JOptionPane.showInputDialog(this, "Costumer name:");
@@ -312,6 +313,7 @@ public class GUIVerwaltung extends JFrame {
 			updateOutput("Produkt nicht gefunden");
 		}
 	}
+	
 
 	private void addOrderButtonClicked() {
 		this.showCustomersButtonClicked();
@@ -325,7 +327,8 @@ public class GUIVerwaltung extends JFrame {
 			int tempQ = controller.returnProductQuantity(product);
 			if (product != null && tempQ >= quantity) {
 				controller.orderHinzufuegen(new Order(customer, product.clone()), quantity);
-				updateOutput("Produkt in Bestellung hinzugefügt:\n" + "Product Name: " + product.getProduct() + ", Anzahl: " + quantity + ", für Kunde: " + customer.getName());
+				updateOutput("Produkt in Bestellung hinzugefügt:\n" + "Product Name: " + product.getProduct() + ", Anzahl: " 
+				+ quantity + ", für Kunde: " + customer.getName());
 			} else {
 				updateOutput("Produkt nicht gefunden oder die Menge von der gegebene Bestellung passt nicht!");
 			}
@@ -348,9 +351,13 @@ public class GUIVerwaltung extends JFrame {
 
 	private void updateOutput(String text) {
 		ausgabe.Print(text);
-		outputTextArea.setText(ausgabe.ausgabeHolen());
+		outputTextArea.setText("");
+	    Font consoleFont = new Font("Monospaced", Font.PLAIN, 12);
+	    outputTextArea.setFont(consoleFont);
+	    outputTextArea.append(text + "\n");
+
 	}
-	
+	// action base of Logout button
 	private void logoutButtonClicked() {
         currentAccountType = null;
         getContentPane().removeAll();
